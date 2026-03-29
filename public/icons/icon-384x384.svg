@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 384 384">
+  <defs>
+    <linearGradient id="grad384" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#073011"/>
+      <stop offset="50%" style="stop-color:#2e823f"/>
+      <stop offset="100%" style="stop-color:#031d0a"/>
+    </linearGradient>
+  </defs>
+  <rect width="384" height="384" rx="64" fill="url(#grad384)"/>
+  <text x="192" y="230" font-size="161" text-anchor="middle" fill="white">🍄</text>
+</svg>
