@@ -133,8 +133,9 @@
 .form-input--error:focus {
   box-shadow: 0 0 0 3px rgba(245, 101, 101, 0.1);
 }
-input[type="date"]::-webkit-datetime-edit {
-  color: rgb(114, 114, 114); /* for dark mode */
+
+input[type="date"] {
+  color-scheme: light dark;
 }
 
 .form-textarea {

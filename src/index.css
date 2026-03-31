@@ -49,6 +49,9 @@ code {
     min-width: 44px;
   }
   
+  input[type="date"] {
+  color-scheme: light dark;
+}
   /* Smoother scrolling */
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch;
