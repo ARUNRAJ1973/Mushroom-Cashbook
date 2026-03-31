@@ -10,12 +10,12 @@ export function Header({ onLogout }: HeaderProps) {
           <div className="flex items-center gap-2">
             <span className="text-2xl sm:text-3xl">🍄</span>
             <div>
-              <h1 className="text-lg sm:text-2xl font-bold leading-tight">AR Organic</h1>
-              <p className="text-green-200 text-xs sm:text-sm hidden sm:block">Daily Sales Tracker</p>
+              <h1 className="text-sm sm:text-2xl font-bold leading-tight">AR Organic Cashbook</h1>
+              <p className="text-green-200 text-xs sm:text-sm ">Daily Sales Tracker</p>
             </div>
           </div>
           <div className="flex items-center gap-3">
-            <p className="text-green-200 text-xs sm:hidden">Cashbook</p>
+           <p className="hidden sm:block text-green-200 text-xs">Logout</p>
             {onLogout && (
               <button
                 onClick={onLogout}

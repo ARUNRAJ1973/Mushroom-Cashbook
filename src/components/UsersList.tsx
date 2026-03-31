@@ -57,7 +57,7 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
           <div className="flex items-center justify-between">
             <button
               onClick={onClose}
-              className="flex items-center gap-2 text-white hover:text-green-200 transition"
+              className="flex items-center text-white hover:text-green-200 transition"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -65,7 +65,7 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
               <span className="text-sm font-medium">Back</span>
             </button>
             <h1 className="text-lg sm:text-xl font-bold">
-              Users List
+              Customers List
             </h1>
             <div className="w-16"></div>
           </div>
@@ -78,15 +78,15 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
           <div className="grid grid-cols-3 gap-4 text-center">
             <div>
               <p className="text-[10px] sm:text-xs text-gray-900 mb-1">Total Users</p>
-              <p className="text-xl sm:text-2xl font-bold text-gray-900">{sortedCustomers.length}</p>
+              <p className="text-lg sm:text-2xl font-bold text-gray-900">{sortedCustomers.length}</p>
             </div>
             <div>
               <p className="text-[10px] sm:text-xs text-gray-900 mb-1">Total Sales</p>
-              <p className="text-xl sm:text-2xl font-bold text-blue-600">{sales.length}</p>
+              <p className="text-lg sm:text-2xl font-bold text-blue-600">{sales.length}</p>
             </div>
             <div>
               <p className="text-[10px] sm:text-xs text-gray-900 mb-1">Total Amount</p>
-              <p className="text-xl sm:text-2xl font-bold text-green-600">
+              <p className="text-lg sm:text-2xl font-bold text-green-600">
                 ₹{sales.reduce((sum, s) => sum + s.amount, 0).toLocaleString()}
               </p>
             </div>
@@ -117,7 +117,7 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
                     </div>
                   </div>
                   <div className="text-right">
-                    <p className="text-lg sm:text-xl font-bold text-gray-900">₹{customer.totalAmount.toLocaleString()}</p>
+                    <p className="text-md sm:text-xl font-bold text-gray-900">₹{customer.totalAmount.toLocaleString()}</p>
                     <p className="text-xs text-gray-700">{customer.totalPacks} packs</p>
                   </div>
                 </div>

@@ -7,6 +7,7 @@ export interface SaleEntry {
   description?: string;
   packs: number;
   amount: number;
+  status?: 'paid' | 'pending';
   user_id: string;
 }
 
@@ -30,6 +31,7 @@ export interface CashbookEntry {
   packs: number;
   amount: number;
   status: 'paid' | 'pending';
+  user_id?: string;
 }
 
 // Ledger Item (combined view of sales and payments)

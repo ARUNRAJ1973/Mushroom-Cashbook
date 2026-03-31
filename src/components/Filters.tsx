@@ -69,7 +69,7 @@ export function Filters({
                   type="text"
                   value={searchQuery}
                   onChange={(e) => onSearchChange(e.target.value)}
-                  placeholder="Search name..."
+                  placeholder="Search customer "
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
                 />
               </div>
@@ -117,7 +117,8 @@ export function Filters({
                 onClick={onExportCSV}
                 className="flex-shrink-0 px-3 py-2 bg-gray-100 hover:bg-gray-200 text-gray-600 rounded-lg text-xs font-medium transition"
               >
-                📥 Download
+                {/* 🚀 */}
+                ⤓ Download
               </button>
 
               <button
@@ -128,7 +129,7 @@ export function Filters({
                   onSearchChange('');
                 }}
                 disabled={!hasActiveFilters}
-                className="flex-shrink-0 px-3 py-2 bg-red-50 hover:bg-red-100 disabled:bg-gray-100 disabled:text-gray-300 text-red-500 disabled:text-gray-300 rounded-lg text-xs font-medium transition"
+                className="flex-shrink-0 px-3 py-2 bg-red-50 hover:bg-red-100 disabled:bg-gray-100 disabled:text-gray-500 text-red-500 disabled:text-gray-300 rounded-lg text-xs font-medium transition"
               >
                 Clear
               </button>

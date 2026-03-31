@@ -17,15 +17,19 @@ export function calculateCustomerBalance(
   const customerSales = sales.filter(s => s.customer === customer);
   const customerPayments = payments.filter(p => p.customer === customer);
   
+  // Calculate totals at customer level - NOT per sale
   const totalSales = customerSales.reduce((sum, s) => sum + s.amount, 0);
   const totalPaid = customerPayments.reduce((sum, p) => sum + p.amount_paid, 0);
   const totalPacks = customerSales.reduce((sum, s) => sum + s.packs, 0);
+  
+  // Pending is calculated at customer level
+  const pendingAmount = Math.max(0, totalSales - totalPaid);
   
   return {
     customer,
     totalSales,
     totalPaid,
-    pendingAmount: totalSales - totalPaid,
+    pendingAmount,
     totalPacks
   };
 }

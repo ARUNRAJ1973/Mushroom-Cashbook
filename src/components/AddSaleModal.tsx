@@ -4,11 +4,11 @@ import type { SaleEntry, PaymentEntry } from '../types';
 interface AddSaleModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onSubmit: (sale: Omit<SaleEntry, 'id' | 'user_id'>, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => void;
+  onSubmit: (sale: Omit<SaleEntry, 'id' | 'user_id'> & { status?: 'paid' | 'pending' }, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => void;
   onDelete?: (id: string) => void;
   onDeletePayment?: (paymentId: string) => void;
   customers: string[];
-  editingSale?: SaleEntry | null;
+  editingSale?: (SaleEntry & { status?: 'paid' | 'pending' }) | null;
   existingPayments?: PaymentEntry[];
 }
 
@@ -20,12 +20,14 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
     packs: '',
     amount: '',
     description: '',
+    status: 'pending' as 'paid' | 'pending',
     amountReceived: '',
     paymentType: 'Cash' as 'Cash' | 'UPI'
   });
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isLoading, setIsLoading] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
+  const [deleteStep, setDeleteStep] = useState<'warning' | 'confirm'>('warning');
   const [paymentToDelete, setPaymentToDelete] = useState<string | null>(null);
 
   const isEditing = !!editingSale;
@@ -40,6 +42,7 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
           packs: editingSale.packs.toString(),
           amount: editingSale.amount.toString(),
           description: editingSale.description || '',
+          status: editingSale.status || 'pending',
           amountReceived: '',
           paymentType: 'Cash'
         });
@@ -51,6 +54,7 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
           packs: '',
           amount: '',
           description: '',
+          status: 'pending',
           amountReceived: '',
           paymentType: 'Cash'
         });
@@ -104,7 +108,8 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
         customer: formData.customer,
         description: formData.description,
         packs: parseInt(formData.packs),
-        amount: parseFloat(formData.amount)
+        amount: parseFloat(formData.amount),
+        status: formData.status
       }, paymentAmount, formData.paymentType);
 
       if (!isEditing) {
@@ -115,6 +120,7 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
           packs: '',
           amount: '',
           description: '',
+          status: 'pending',
           amountReceived: '',
           paymentType: 'Cash'
         });
@@ -126,7 +132,17 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
   };
 
   const handleDeleteClick = () => {
+    // Check if there are payments for this sale
+    if (salePayments.length > 0) {
+      setDeleteStep('warning');
+    } else {
+      setDeleteStep('confirm');
+    }
     setShowDeleteConfirm(true);
+  };
+
+  const handleProceedToDelete = () => {
+    setDeleteStep('confirm');
   };
 
   const handleConfirmDelete = async () => {
@@ -134,16 +150,17 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
       setIsLoading(true);
       try {
         await onDelete(editingSale.id);
-        setShowDeleteConfirm(false);
-        onClose();
+        // Modal will be closed by parent after data refresh
       } finally {
         setIsLoading(false);
+        setShowDeleteConfirm(false);
       }
     }
   };
 
   const handleCancelDelete = () => {
     setShowDeleteConfirm(false);
+    setDeleteStep('warning');
     setPaymentToDelete(null);
   };
 
@@ -323,6 +340,64 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
             </div>
           </div>
 
+          {/* Status Radio Buttons */}
+          <div>
+            <label className="block text-xs sm:text-sm font-semibold text-gray-700 mb-3">
+              Status
+            </label>
+            <div className="flex gap-3">
+              <label 
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all ${
+                  formData.status === 'pending' 
+                    ? 'border-orange-400 bg-orange-50' 
+                    : 'border-gray-200 bg-white hover:border-orange-200'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value="pending"
+                  checked={formData.status === 'pending'}
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                <span className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
+                  formData.status === 'pending' ? 'border-orange-500' : 'border-gray-400'
+                }`}>
+                  {formData.status === 'pending' && <span className="w-1.5 h-1.5 rounded-full bg-orange-500"></span>}
+                </span>
+                <span className={`text-sm font-medium ${
+                  formData.status === 'pending' ? 'text-orange-700' : 'text-gray-600'
+                }`}>Pending</span>
+              </label>
+              
+              <label 
+                className={`flex-1 flex items-center justify-center gap-2 px-4 py-3 rounded-xl border-2 cursor-pointer transition-all ${
+                  formData.status === 'paid' 
+                    ? 'border-green-500 bg-green-50' 
+                    : 'border-gray-200 bg-white hover:border-green-200'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="status"
+                  value="paid"
+                  checked={formData.status === 'paid'}
+                  onChange={handleChange}
+                  className="hidden"
+                />
+                <span className={`w-3 h-3 rounded-full border-2 flex items-center justify-center ${
+                  formData.status === 'paid' ? 'border-green-600' : 'border-gray-400'
+                }`}>
+                  {formData.status === 'paid' && <span className="w-1.5 h-1.5 rounded-full bg-green-600"></span>}
+                </span>
+                <span className={`text-sm font-medium ${
+                  formData.status === 'paid' ? 'text-green-700' : 'text-gray-600'
+                }`}>Paid</span>
+              </label>
+            </div>
+          </div>
+
           {/* Existing Payments Section - Only when editing */}
           {isEditing && salePayments.length > 0 && (
             <div className="bg-blue-50 rounded-xl p-3 sm:p-4 border border-blue-200">
@@ -468,44 +543,81 @@ export function AddSaleModal({ isOpen, onClose, onSubmit, onDelete, onDeletePaym
         </form>
       </div>
 
-      {/* Delete Sale Confirmation Modal */}
+      {/* Delete Sale Modal - Combined Warning + Confirmation */}
       {showDeleteConfirm && (
         <div className="fixed inset-0 bg-black/60 flex items-center justify-center z-[60] p-4">
           <div className="bg-white rounded-xl shadow-2xl max-w-sm w-full p-6 animate-in fade-in zoom-in duration-200">
-            <div className="text-center mb-6">
-              <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                <svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                </svg>
-              </div>
-              <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Sale?</h3>
-              <p className="text-gray-500 text-sm">
-                Are you sure you want to delete this sale? This action cannot be undone.
-              </p>
-            </div>
-            <div className="flex gap-3">
-              <button
-                onClick={handleCancelDelete}
-                disabled={isLoading}
-                className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition disabled:opacity-50"
-              >
-                Cancel
-              </button>
-              <button
-                onClick={handleConfirmDelete}
-                disabled={isLoading}
-                className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition disabled:opacity-70 flex items-center justify-center gap-2"
-              >
-                {isLoading ? (
-                  <>
-                    <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></div>
-                    <span>Deleting...</span>
-                  </>
-                ) : (
-                  <span>Delete</span>
-                )}
-              </button>
-            </div>
+            {deleteStep === 'warning' && salePayments.length > 0 ? (
+              /* Step 1: Warning when payments exist */
+              <>
+                <div className="text-center mb-5">
+                  <div className="w-14 h-14 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-7 h-7 text-orange-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Payments Exist!</h3>
+                  <p className="text-gray-600 text-sm mb-3">
+                    This sale has <span className="font-bold text-orange-600">{salePayments.length} payment(s)</span> totalling <span className="font-bold text-orange-600">₹{existingPaidAmount.toLocaleString()}</span>.
+                  </p>
+                  <p className="text-gray-500 text-sm">
+                    Deleting this sale will also <span className="font-semibold text-red-600">delete all related payments</span> to keep the balance correct.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCancelDelete}
+                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleProceedToDelete}
+                    className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition"
+                  >
+                    Continue
+                  </button>
+                </div>
+              </>
+            ) : (
+              /* Step 2: Final Confirmation */
+              <>
+                <div className="text-center mb-6">
+                  <div className="w-14 h-14 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-7 h-7 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                    </svg>
+                  </div>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-2">Delete Sale?</h3>
+                  <p className="text-gray-500 text-sm">
+                    Are you sure you want to delete this sale{salePayments.length > 0 ? ' and its related payments' : ''}? This action cannot be undone.
+                  </p>
+                </div>
+                <div className="flex gap-3">
+                  <button
+                    onClick={handleCancelDelete}
+                    disabled={isLoading}
+                    className="flex-1 px-4 py-2.5 bg-gray-100 hover:bg-gray-200 text-gray-700 font-medium rounded-lg transition disabled:opacity-50"
+                  >
+                    Cancel
+                  </button>
+                  <button
+                    onClick={handleConfirmDelete}
+                    disabled={isLoading}
+                    className="flex-1 px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition disabled:opacity-70 flex items-center justify-center gap-2"
+                  >
+                    {isLoading ? (
+                      <>
+                        <div className="animate-spin w-4 h-4 border-2 border-white/30 border-t-white rounded-full"></div>
+                        <span>Deleting...</span>
+                      </>
+                    ) : (
+                      <span>Delete</span>
+                    )}
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       )}

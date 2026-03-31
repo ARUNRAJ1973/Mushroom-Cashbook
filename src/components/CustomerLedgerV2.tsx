@@ -24,6 +24,7 @@ interface TransactionRow {
   amount: number;
   paid: number;
   pending: number;
+  isPaid: boolean;
   sale: SaleEntry;
   payments: PaymentEntry[];
 }
@@ -47,49 +48,58 @@ export function CustomerLedgerV2({
     return payments.filter(p => p.customer === customerName);
   }, [payments, customerName]);
 
-  // Create combined rows - each sale is a row with its payments
+  // Calculate customer-level totals first
+  const customerTotals = useMemo(() => {
+    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
+    const totalPaid = customerPayments.reduce((sum, p) => sum + p.amount_paid, 0);
+    const totalPacks = sales.reduce((sum, s) => sum + s.packs, 0);
+    const pendingAmount = Math.max(0, totalSales - totalPaid);
+    
+    return {
+      totalSales,
+      totalPaid,
+      pendingAmount,
+      totalPacks
+    };
+  }, [sales, customerPayments]);
+
+  // Create transaction rows - show sales with status based on payments for that specific sale
   const transactionRows = useMemo<TransactionRow[]>(() => {
     return sales.map(sale => {
-      // Find payments for this sale (match by customer and date)
+      // Find payments for this sale date (to determine sale status)
       const salePayments = customerPayments.filter(p => 
         p.date === sale.date
       );
       
-      const paid = salePayments.reduce((sum, p) => sum + p.amount_paid, 0);
-      const pending = Math.max(0, sale.amount - paid);
-      
-      // Calculate pack breakdown based on payment proportion
-      const paymentRatio = sale.amount > 0 ? paid / sale.amount : 0;
-      const paidPacks = Math.round(sale.packs * paymentRatio);
-      const pendingPacks = sale.packs - paidPacks;
+      const salePaidAmount = salePayments.reduce((sum, p) => sum + p.amount_paid, 0);
+      const isPaid = salePaidAmount >= sale.amount;
       
       return {
         id: sale.id,
         date: sale.date,
         type: 'sale' as const,
         packs: sale.packs,
-        paidPacks,
-        pendingPacks,
+        paidPacks: isPaid ? sale.packs : 0,
+        pendingPacks: isPaid ? 0 : sale.packs,
         description: sale.description,
         amount: sale.amount,
-        paid: paid,
-        pending: pending,
+        paid: salePaidAmount,
+        pending: Math.max(0, sale.amount - salePaidAmount),
+        isPaid,
         sale: sale,
         payments: salePayments
       };
     }).sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime());
   }, [sales, customerPayments]);
 
-  // Calculate totals using only this customer's data
+  // Calculate display totals using customer-level calculations
   const totals = useMemo(() => {
-    const totalSales = sales.reduce((sum, s) => sum + s.amount, 0);
-    const totalPaid = customerPayments.reduce((sum, p) => sum + p.amount_paid, 0);
-    const totalPacks = sales.reduce((sum, s) => sum + s.packs, 0);
-    const pendingAmount = Math.max(0, totalSales - totalPaid);
+    const { totalSales, totalPaid, pendingAmount, totalPacks } = customerTotals;
     
-    // Calculate pack breakdown
-    const totalPaidPacks = transactionRows.reduce((sum, row) => sum + row.paidPacks, 0);
-    const totalPendingPacks = transactionRows.reduce((sum, row) => sum + row.pendingPacks, 0);
+    // Calculate pack breakdown based on payment ratio
+    const paymentRatio = totalSales > 0 ? totalPaid / totalSales : 0;
+    const totalPaidPacks = Math.round(totalPacks * paymentRatio);
+    const totalPendingPacks = totalPacks - totalPaidPacks;
     
     return {
       totalSales,
@@ -99,7 +109,7 @@ export function CustomerLedgerV2({
       totalPaidPacks,
       totalPendingPacks
     };
-  }, [sales, payments, transactionRows]);
+  }, [customerTotals]);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -179,7 +189,7 @@ export function CustomerLedgerV2({
           <div className="flex items-center justify-between">
             <button
               onClick={onClose}
-              className="flex items-center gap-2 text-white hover:text-green-200 transition"
+              className="flex items-center text-white hover:text-green-200 transition"
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
@@ -189,12 +199,13 @@ export function CustomerLedgerV2({
             <h1 className="text-lg sm:text-xl font-bold truncate max-w-[200px] sm:max-w-md">
               {customerName}
             </h1>
-            <button
+            {/* <button
               onClick={() => onAddPayment(customerName)}
               className="bg-white/20 hover:bg-white/30 text-white px-2 sm:px-3 py-1.5 rounded-lg text-xs sm:text-sm font-medium transition"
             >
               + Payment
-            </button>
+            </button> */}
+            <div className="w-8"></div>
           </div>
         </div>
       </header>
@@ -274,8 +285,7 @@ export function CustomerLedgerV2({
                     <th className="px-2 sm:px-3 py-2 text-left">Date</th>
                     <th className="px-2 sm:px-3 py-2 text-left">Details</th>
                     <th className="px-2 sm:px-3 py-2 text-right">Amount</th>
-                    <th className="px-2 sm:px-3 py-2 text-right">Paid</th>
-                    <th className="px-2 sm:px-3 py-2 text-right">Pending</th>
+                    <th className="px-2 sm:px-3 py-2 text-right">Status</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-100">
@@ -293,12 +303,6 @@ export function CustomerLedgerV2({
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{row.packs} packs</span>
-                            {/* {row.paidPacks > 0 && (
-                              <span className="text-[10px] text-green-600">({row.paidPacks} paid)</span>
-                            )} */}
-                            {/* {row.pendingPacks > 0 && (
-                              <span className="text-[10px] text-red-600">({row.pendingPacks} pending)</span>
-                            )} */}
                           </div>
                           {row.description && (
                             <p className="text-[10px] sm:text-xs text-gray-400">{row.description}</p>
@@ -324,13 +328,16 @@ export function CustomerLedgerV2({
                       <td className="px-2 sm:px-3 py-2 sm:py-3 text-right font-medium text-blue-600">
                         ₹{row.amount.toLocaleString()}
                       </td>
-                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-right font-medium text-green-600">
-                        ₹{row.paid.toLocaleString()}
-                      </td>
-                      <td className={`px-2 sm:px-3 py-2 sm:py-3 text-right font-semibold ${
-                        row.pending > 0 ? 'text-red-600' : 'text-green-600'
-                      }`}>
-                        ₹{row.pending.toLocaleString()}
+                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-right">
+                        {row.isPaid ? (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                            Paid
+                          </span>
+                        ) : (
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-800">
+                            Pending
+                          </span>
+                        )}
                       </td>
                     </tr>
                   ))}

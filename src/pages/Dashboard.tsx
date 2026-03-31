@@ -89,6 +89,7 @@ export function Dashboard() {
         description: item.description,
         packs: item.packs,
         amount: item.amount,
+        status: item.status || 'pending',
         user_id: item.user_id
       }));
       console.log('Formatted sales:', formattedSales);
@@ -189,7 +190,7 @@ export function Dashboard() {
     return getAllCustomers(sales, payments);
   }, [sales, payments]);
 
-  // Filter sales based on selected filters
+  // Filter sales based on selected filters (includes search for UI display)
   const filteredSales = useMemo(() => {
     let result = [...sales];
     if (month) result = result.filter(s => s.date.startsWith(month));
@@ -198,15 +199,31 @@ export function Dashboard() {
     return result;
   }, [sales, month, fromDate, toDate, searchQuery]);
 
+  // Date-only filtered sales for CSV export (no search query, so all entries in range are exported)
+  const exportSales = useMemo(() => {
+    let result = [...sales];
+    if (month) result = result.filter(s => s.date.startsWith(month));
+    if (fromDate && toDate) result = result.filter(s => s.date >= fromDate && s.date <= toDate);
+    return result;
+  }, [sales, month, fromDate, toDate]);
+
   // Get customers with pending balance
   const customersWithPending = useMemo(() => {
     return getCustomersWithPending(sales, payments);
   }, [sales, payments]);
 
-  // Calculate dashboard totals
+  // Filter payments matching the same date filter as sales
+  const filteredPayments = useMemo(() => {
+    let result = [...payments];
+    if (month) result = result.filter(p => p.date.startsWith(month));
+    if (fromDate && toDate) result = result.filter(p => p.date >= fromDate && p.date <= toDate);
+    return result;
+  }, [payments, month, fromDate, toDate]);
+
+  // Calculate dashboard totals based on filtered data
   const totals = useMemo(() => {
-    return calculateDashboardTotals(sales, payments);
-  }, [sales, payments]);
+    return calculateDashboardTotals(filteredSales, filteredPayments);
+  }, [filteredSales, filteredPayments]);
 
   // Get grouped data for display
   const groupedData = useMemo(() => {
@@ -215,7 +232,11 @@ export function Dashboard() {
 
   // Calculate sale status based on payments for a specific customer and date
   const getSaleStatus = (sale: SaleEntry): 'paid' | 'pending' => {
-    // Get all payments for this customer on this sale's date
+    // First check if status is stored in the sale entry
+    if (sale.status) {
+      return sale.status;
+    }
+    // Fallback: calculate from payments for this customer and date
     const salePayments = payments.filter(p => 
       p.customer === sale.customer && p.date === sale.date
     );
@@ -234,7 +255,7 @@ export function Dashboard() {
   }, [sales]);
 
   // Handle add sale
-  const handleAddSale = async (saleData: Omit<SaleEntry, 'id' | 'user_id'>, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => {
+  const handleAddSale = async (saleData: Omit<SaleEntry, 'id' | 'user_id'> & { status?: 'paid' | 'pending' }, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => {
     const { error } = await supabase
       .from('sales_entries')
       .insert([{
@@ -244,6 +265,7 @@ export function Dashboard() {
         description: saleData.description,
         packs: saleData.packs,
         amount: saleData.amount,
+        status: saleData.status || 'pending',
         user_id: userId
       }]);
 
@@ -275,7 +297,7 @@ export function Dashboard() {
   };
 
   // Handle edit sale
-  const handleEditSale = async (saleData: Omit<SaleEntry, 'id' | 'user_id'>, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => {
+  const handleEditSale = async (saleData: Omit<SaleEntry, 'id' | 'user_id'> & { status?: 'paid' | 'pending' }, paymentAmount?: number, paymentType?: 'Cash' | 'UPI') => {
     if (!editingSale) return;
 
     const { error } = await supabase
@@ -287,6 +309,7 @@ export function Dashboard() {
         description: saleData.description,
         packs: saleData.packs,
         amount: saleData.amount,
+        status: saleData.status || 'pending',
       })
       .eq('id', editingSale.id)
       .eq('user_id', userId);
@@ -321,6 +344,29 @@ export function Dashboard() {
 
   // Handle delete sale
   const handleDeleteSale = async (saleId: string) => {
+    // First, get the sale details to find related payments
+    const { data: saleData } = await supabase
+      .from('sales_entries')
+      .select('customer_name, date')
+      .eq('id', saleId)
+      .eq('user_id', userId)
+      .single();
+
+    if (saleData) {
+      // Delete related payments for this customer and date
+      const { error: paymentError } = await supabase
+        .from('payments')
+        .delete()
+        .eq('customer_name', saleData.customer_name)
+        .eq('date', saleData.date)
+        .eq('user_id', userId);
+
+      if (paymentError) {
+        console.error('Error deleting payments:', paymentError);
+      }
+    }
+
+    // Delete the sale
     const { error } = await supabase
       .from('sales_entries')
       .delete()
@@ -335,6 +381,7 @@ export function Dashboard() {
 
     setEditingSale(null);
     await fetchData();
+    setIsSaleModalOpen(false);
   };
 
   // Handle edit entry click
@@ -347,10 +394,45 @@ export function Dashboard() {
       description: entry.description,
       packs: entry.packs,
       amount: entry.amount,
+      status: entry.status,
       user_id: userId || ''
     };
     setEditingSale(saleEntry);
     setIsSaleModalOpen(true);
+  };
+
+  // Update sale status in database based on payments
+  const updateSaleStatus = async (customer: string, date: string) => {
+    // Find the sale for this customer and date
+    const { data: salesData } = await supabase
+      .from('sales_entries')
+      .select('id, amount')
+      .eq('customer_name', customer)
+      .eq('date', date)
+      .eq('user_id', userId);
+
+    if (!salesData || salesData.length === 0) return;
+
+    // Get all payments for this customer and date
+    const { data: paymentsData } = await supabase
+      .from('payments')
+      .select('amount_paid')
+      .eq('customer_name', customer)
+      .eq('date', date)
+      .eq('user_id', userId);
+
+    const totalPaid = paymentsData?.reduce((sum, p) => sum + p.amount_paid, 0) || 0;
+
+    // Update each sale's status
+    for (const sale of salesData) {
+      const newStatus = totalPaid >= sale.amount ? 'paid' : 'pending';
+      
+      await supabase
+        .from('sales_entries')
+        .update({ status: newStatus })
+        .eq('id', sale.id)
+        .eq('user_id', userId);
+    }
   };
 
   // Handle add payment
@@ -370,6 +452,9 @@ export function Dashboard() {
       alert('Error adding payment');
       return;
     }
+
+    // Update sale status if there's a matching sale
+    await updateSaleStatus(paymentData.customer, paymentData.date);
 
     await fetchData();
     setIsPaymentModalOpen(false);
@@ -396,6 +481,12 @@ export function Dashboard() {
       return;
     }
 
+    // Update sale status for both old and new customer/date if changed
+    await updateSaleStatus(editingPayment.customer, editingPayment.date);
+    if (editingPayment.customer !== paymentData.customer || editingPayment.date !== paymentData.date) {
+      await updateSaleStatus(paymentData.customer, paymentData.date);
+    }
+
     setEditingPayment(null);
     await fetchData();
     setIsPaymentModalOpen(false);
@@ -403,6 +494,14 @@ export function Dashboard() {
 
   // Handle delete payment
   const handleDeletePayment = async (paymentId: string) => {
+    // Get payment details before deleting
+    const { data: paymentData } = await supabase
+      .from('payments')
+      .select('customer_name, date')
+      .eq('id', paymentId)
+      .eq('user_id', userId)
+      .single();
+
     const { error } = await supabase
       .from('payments')
       .delete()
@@ -413,6 +512,11 @@ export function Dashboard() {
       console.error('Error deleting payment:', error);
       alert('Error deleting payment');
       return;
+    }
+
+    // Update sale status after payment deletion
+    if (paymentData) {
+      await updateSaleStatus(paymentData.customer_name, paymentData.date);
     }
 
     setEditingPayment(null);
@@ -456,17 +560,76 @@ export function Dashboard() {
 
   const handleExportCSV = () => {
     const timestamp = new Date().toISOString().replace(/[:.]/g, '-').slice(0, 19);
-    const csvContent = [
-      ['Date', 'Time', 'Customer', 'Packs', 'Amount', 'Description'],
-      ...filteredSales.map(sale => [
+
+    // Build filter label for summary
+    let filterLabel = 'All Time';
+    if (month) filterLabel = `Month: ${month}`;
+    else if (fromDate && toDate) filterLabel = `${fromDate} to ${toDate}`;
+
+    // Filter sales and payments based on active tab
+    let tabFilteredSales = [...exportSales];
+    let tabFilteredPayments = [...filteredPayments];
+
+    if (activeTab === 'paid') {
+      // Only fully paid customers (pending = 0 AND has sales)
+      const allCustomersWithBalances = getCustomersWithBalances(exportSales, filteredPayments);
+      const paidCustomers = new Set(allCustomersWithBalances.filter(c => c.pendingAmount === 0 && c.totalSales > 0).map(c => c.customer));
+      tabFilteredSales = exportSales.filter(s => paidCustomers.has(s.customer));
+      tabFilteredPayments = filteredPayments.filter(p => paidCustomers.has(p.customer));
+    } else if (activeTab === 'pending') {
+      // Only customers with pending balance (pending > 0)
+      const allCustomersWithBalances = getCustomersWithBalances(exportSales, filteredPayments);
+      const pendingCustomers = new Set(allCustomersWithBalances.filter(c => c.pendingAmount > 0).map(c => c.customer));
+      console.log('Pending export - All customers with balances:', allCustomersWithBalances);
+      console.log('Pending customers set:', Array.from(pendingCustomers));
+      tabFilteredSales = exportSales.filter(s => pendingCustomers.has(s.customer));
+      tabFilteredPayments = filteredPayments.filter(p => pendingCustomers.has(p.customer));
+      console.log('Filtered sales count:', tabFilteredSales.length, 'Filtered payments count:', tabFilteredPayments.length);
+    }
+    // For 'all' tab, no filtering needed - use all exportSales and filteredPayments
+
+    // Compute export-specific totals (tab-filtered)
+    const exportTotalPacks = tabFilteredSales.reduce((sum, s) => sum + s.packs, 0);
+    const exportTotalAmount = tabFilteredSales.reduce((sum, s) => sum + s.amount, 0);
+    const exportTotalPaid = tabFilteredPayments.reduce((sum, p) => sum + p.amount_paid, 0);
+    const exportTotalPending = Math.max(0, exportTotalAmount - exportTotalPaid);
+
+    // Summary section
+    const summaryRows = [
+      ['AR Organic Cashbook - Export'],
+      ['Exported At', new Date().toLocaleString()],
+      ['Filter', filterLabel],
+      ['Active Tab', activeTab === 'all' ? 'All' : activeTab === 'paid' ? 'Fully Paid' : 'Pending'],
+      [],
+      ['--- SUMMARY ---'],
+      ['Total Packs', exportTotalPacks],
+      ['Total Amount (₹)', exportTotalAmount],
+      ['Total Paid (₹)', exportTotalPaid],
+      ['Total Pending (₹)', exportTotalPending],
+      [],
+      ['--- SALES ENTRIES ---'],
+      ['Date', 'Time', 'Customer', 'Packs', 'Amount (₹)', 'Status', 'Description'],
+      ...tabFilteredSales.map(sale => [
         sale.date,
         sale.time,
         sale.customer,
         sale.packs,
         sale.amount,
+        sale.status || 'pending',
         sale.description || '',
-      ])
-    ]
+      ]),
+      [],
+      ['--- PAYMENTS ---'],
+      ['Date', 'Customer', 'Amount Paid (₹)', 'Note'],
+      ...tabFilteredPayments.map(p => [
+        p.date,
+        p.customer,
+        p.amount_paid,
+        p.note || '',
+      ]),
+    ];
+
+    const csvContent = summaryRows
       .map(row => row.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(','))
       .join('\n');
 
@@ -674,7 +837,7 @@ export function Dashboard() {
                 <span>+</span>
                 <span>Add Sale</span>
               </button>
-              <button
+              {/* <button
                 onClick={() => {
                   setPaymentModalCustomer('');
                   setIsPaymentModalOpen(true);
@@ -683,7 +846,7 @@ export function Dashboard() {
               >
                 <span>+</span>
                 <span>Add Payment</span>
-              </button>
+              </button> */}
             </div>
 
             <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
@@ -723,49 +886,86 @@ export function Dashboard() {
             )}
 
             {activeTab === 'paid' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="bg-gray-50 px-3 sm:px-4 py-3 border-b border-gray-200">
-                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Fully Paid Customers</h3>
-                </div>
-                {(() => {
-                  const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
-                  console.log('All customers with balances:', allCustomersWithBalances);
-                  // A customer is "paid" if they have sales AND (pending <= 0, meaning fully paid or overpaid)
-                  const paidCustomers = allCustomersWithBalances.filter(c => c.pendingAmount <= 0 && c.totalSales > 0);
-                  console.log('Paid customers:', paidCustomers);
-                  if (paidCustomers.length === 0) {
+              <div className="space-y-4">
+                {/* Fully Paid Section */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="bg-green-50 px-3 sm:px-4 py-3 border-b border-green-200">
+                    <h3 className="font-semibold text-green-800 text-sm sm:text-base">Fully Paid</h3>
+                  </div>
+                  {(() => {
+                    const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
+                    // Fully paid: pending is 0 and has sales
+                    const fullyPaidCustomers = allCustomersWithBalances.filter(c => c.pendingAmount === 0 && c.totalSales > 0);
+                    if (fullyPaidCustomers.length === 0) {
+                      return (
+                        <div className="p-6 text-center">
+                          <p className="text-gray-500 text-sm">No fully paid customers</p>
+                        </div>
+                      );
+                    }
                     return (
-                      <div className="p-8 text-center">
-                        <p className="text-gray-500">No fully paid customers</p>
-                        {allCustomersWithBalances.length > 0 && (
-                          <p className="text-xs text-gray-400 mt-2">
-                            Found {allCustomersWithBalances.length} customers with sales
-                          </p>
-                        )}
+                      <div className="divide-y divide-gray-100">
+                        {fullyPaidCustomers.map((customer) => (
+                          <div 
+                            key={customer.customer}
+                            onClick={() => handleViewCustomer(customer.customer)}
+                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                          >
+                            <div>
+                              <p className="font-medium text-gray-900">{customer.customer}</p>
+                              <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-green-700">₹{customer.totalPaid.toLocaleString()}</p>
+                              <p className="text-xs text-green-600">fully paid</p>
+                            </div>
+                          </div>
+                        ))}
                       </div>
                     );
-                  }
-                  return (
-                    <div className="divide-y divide-gray-100">
-                      {paidCustomers.map((customer) => (
-                        <div 
-                          key={customer.customer}
-                          onClick={() => handleViewCustomer(customer.customer)}
-                          className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
-                        >
-                          <div>
-                            <p className="font-medium text-gray-900">{customer.customer}</p>
-                            <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
-                          </div>
-                          <div className="text-right">
-                            <p className="font-bold text-green-600">₹{customer.totalPaid.toLocaleString()}</p>
-                            <p className="text-xs text-green-500">{customer.pendingAmount < 0 ? 'overpaid' : 'fully paid'}</p>
-                          </div>
+                  })()}
+                </div>
+
+                {/* Partially Paid Section */}
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                  <div className="bg-orange-50 px-3 sm:px-4 py-3 border-b border-orange-200">
+                    <h3 className="font-semibold text-orange-800 text-sm sm:text-base">Partially Paid</h3>
+                  </div>
+                  {(() => {
+                    const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
+                    // Partially paid: has paid some amount but still has pending balance
+                    const partiallyPaidCustomers = allCustomersWithBalances.filter(c => 
+                      c.totalPaid > 0 && c.pendingAmount > 0
+                    );
+                    if (partiallyPaidCustomers.length === 0) {
+                      return (
+                        <div className="p-6 text-center">
+                          <p className="text-gray-500 text-sm">No partially paid customers</p>
                         </div>
-                      ))}
-                    </div>
-                  );
-                })()}
+                      );
+                    }
+                    return (
+                      <div className="divide-y divide-gray-100">
+                        {partiallyPaidCustomers.map((customer) => (
+                          <div 
+                            key={customer.customer}
+                            onClick={() => handleViewCustomer(customer.customer)}
+                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                          >
+                            <div>
+                              <p className="font-medium text-gray-900">{customer.customer}</p>
+                              <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
+                            </div>
+                            <div className="text-right">
+                              <p className="font-bold text-green-700">₹{customer.totalPaid.toLocaleString()}</p>
+                              <p className="text-xs text-orange-600">₹{customer.pendingAmount.toLocaleString()} pending</p>
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    );
+                  })()}
+                </div>
               </div>
             )}
 
