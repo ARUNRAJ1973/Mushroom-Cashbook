@@ -98,8 +98,7 @@ export function Filters({
                   type="date"
                   value={fromDate}
                   onChange={(e) => onFromDateChange(e.target.value)}
-                  // className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  className="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
+                  className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
                   placeholder="From"
                 />
               </div>
@@ -108,8 +107,7 @@ export function Filters({
                   type="date"
                   value={toDate}
                   onChange={(e) => onToDateChange(e.target.value)}
-                  // className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  className="w-full px-2 py-2 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-600 rounded-lg text-xs text-gray-900 dark:text-white placeholder-gray-400 dark:placeholder-gray-400 focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
+                  className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
                   placeholder="To"
                 />
               </div>
