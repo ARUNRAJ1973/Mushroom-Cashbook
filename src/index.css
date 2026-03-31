@@ -49,8 +49,8 @@ code {
     min-width: 44px;
   }
   
-  input[type="date"] {
-  color-scheme: light dark;
+input[type="date"]::-webkit-datetime-edit {
+  color: inherit;
 }
   /* Smoother scrolling */
   .overflow-y-auto {
