@@ -138,6 +138,11 @@ input[type="date"]::-webkit-datetime-edit {
   color: inherit;
 }
 
+::placeholder {
+  color: #9ca3af; /* gray-400 */
+  opacity: 1;
+}
+
 .form-textarea {
   resize: vertical;
   font-family: inherit;

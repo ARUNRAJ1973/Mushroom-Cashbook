@@ -52,6 +52,12 @@ code {
 input[type="date"]::-webkit-datetime-edit {
   color: inherit;
 }
+
+::placeholder {
+  color: #9ca3af; /* gray-400 */
+  opacity: 1;
+}
+
   /* Smoother scrolling */
   .overflow-y-auto {
     -webkit-overflow-scrolling: touch;

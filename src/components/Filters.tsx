@@ -99,7 +99,7 @@ export function Filters({
                   value={fromDate}
                   onChange={(e) => onFromDateChange(e.target.value)}
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  // placeholder="From"
+                  placeholder="From"
                 />
               </div>
               <div className="flex-shrink-0 w-28">
@@ -108,9 +108,28 @@ export function Filters({
                   value={toDate}
                   onChange={(e) => onToDateChange(e.target.value)}
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  // placeholder="To"
+                  placeholder="To"
                 />
               </div>
+{/* 
+              <div className="flex-shrink-0 w-28">
+  <label className="block text-gray-500 text-xs mb-1">From</label>
+  <input
+    type="date"
+    value={fromDate}
+    onChange={(e) => onFromDateChange(e.target.value)}
+    className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
+  />
+</div>
+<div className="flex-shrink-0 w-28">
+  <label className="block text-gray-500 text-xs mb-1">To</label>
+  <input
+    type="date"
+    value={toDate}
+    onChange={(e) => onToDateChange(e.target.value)}
+    className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
+  />
+</div> */}
 
               {/* Action Buttons */}
               <button
