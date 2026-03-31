@@ -93,7 +93,7 @@ export function Filters({
               </div>
 
               {/* Date Range */}
-              <div className="flex-shrink-0 w-28">
+              {/* <div className="flex-shrink-0 w-28">
                 <input
                   type="date"
                   value={fromDate}
@@ -110,26 +110,37 @@ export function Filters({
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
                   placeholder="To"
                 />
-              </div>
-{/* 
-              <div className="flex-shrink-0 w-28">
-  <label className="block text-gray-500 text-xs mb-1">From</label>
+              </div> */}
+
+
+              <div className="relative flex-shrink-0 w-28">
   <input
     type="date"
     value={fromDate}
     onChange={(e) => onFromDateChange(e.target.value)}
     className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
   />
+  {!fromDate && (
+    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
+      From
+    </span>
+  )}
 </div>
-<div className="flex-shrink-0 w-28">
-  <label className="block text-gray-500 text-xs mb-1">To</label>
+
+<div className="relative flex-shrink-0 w-28">
   <input
     type="date"
     value={toDate}
     onChange={(e) => onToDateChange(e.target.value)}
     className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
   />
-</div> */}
+  {!toDate && (
+    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
+      To
+    </span>
+  )}
+</div>
+
 
               {/* Action Buttons */}
               <button
