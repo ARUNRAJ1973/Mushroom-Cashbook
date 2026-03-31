@@ -832,7 +832,7 @@ export function Dashboard() {
             <div className="flex gap-3 mb-4">
               <button
                 onClick={() => setIsSaleModalOpen(true)}
-                className="flex-1 bg-gradient-to-r from-[#073011] to-[#2e823f] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
+                className="flex-1 bg-gradient-to-r from-[#113D24] to-[#19663B] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
               >
                 <span>+</span>
                 <span>Add Sale</span>
@@ -1084,7 +1084,7 @@ export function Dashboard() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsSaleModalOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-[#073011] hover:bg-[#2e823f] text-white rounded-full shadow-lg shadow-green-900/40 flex items-center justify-center transition transform hover:scale-105 active:scale-95 z-30"
+        className="fixed bottom-6 right-6 w-14 h-14 bg-[#186338] hover:bg-[#2e823f] text-white rounded-full shadow-lg shadow-green-900/40 flex items-center justify-center transition transform hover:scale-105 active:scale-95 z-30"
         aria-label="Add new sale"
       >
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

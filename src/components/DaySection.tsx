@@ -35,12 +35,12 @@ export function DaySection({ date, entries, onAddEntry, onEditEntry, onViewCusto
             <p className="text-xs text-gray-700">{entries.length} entries</p>
           </div>
         </div>
-        <button
+        {/* <button
           onClick={onAddEntry}
           className="p-1 bg-green-600 hover:bg-green-400 text-white border border-gray-300 rounded-md transition"
         >
           <span className="text-lg">+</span>
-        </button>
+        </button> */}
       </div>
 
       {/* Entry Cards */}

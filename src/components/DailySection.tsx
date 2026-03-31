@@ -54,7 +54,7 @@ export function DailySection({ dailySummary }: DailySectionProps) {
             <span className="daily-footer__value daily-footer__value--paid">₹{dailySummary.paidAmount.toLocaleString()}</span>
           </div>
           <div className="daily-footer__item">
-            <span className="daily-footer__label">Pendingsqq:</span>
+            <span className="daily-footer__label">Pending:</span>
             <span className="daily-footer__value daily-footer__value--pending">₹{dailySummary.pendingAmount.toLocaleString()}</span>
           </div>
         </div>

@@ -4,7 +4,7 @@ interface HeaderProps {
 
 export function Header({ onLogout }: HeaderProps) {
   return (
-    <header className="bg-gradient-to-r from-[#073011] via-[#2e823f] to-[#031d0a] text-white sticky top-0 z-40 shadow-lg">
+    <header className="bg-gradient-to-r from-[#186338] via-[#186338] to-[#186338] text-white sticky top-0 z-40 shadow-lg">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
