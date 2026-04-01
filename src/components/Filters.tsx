@@ -92,54 +92,34 @@ export function Filters({
                 </select>
               </div>
 
-              {/* Date Range */}
-              {/* <div className="flex-shrink-0 w-28">
+
+              <div className="relative flex-shrink-0 w-28">
                 <input
                   type="date"
                   value={fromDate}
                   onChange={(e) => onFromDateChange(e.target.value)}
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  placeholder="From"
                 />
+                {!fromDate && (
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
+                    From
+                  </span>
+                )}
               </div>
-              <div className="flex-shrink-0 w-28">
+
+              <div className="relative flex-shrink-0 w-28">
                 <input
                   type="date"
                   value={toDate}
                   onChange={(e) => onToDateChange(e.target.value)}
                   className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-                  placeholder="To"
                 />
-              </div> */}
-
-
-              <div className="relative flex-shrink-0 w-28">
-  <input
-    type="date"
-    value={fromDate}
-    onChange={(e) => onFromDateChange(e.target.value)}
-    className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-  />
-  {!fromDate && (
-    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
-      From
-    </span>
-  )}
-</div>
-
-<div className="relative flex-shrink-0 w-28">
-  <input
-    type="date"
-    value={toDate}
-    onChange={(e) => onToDateChange(e.target.value)}
-    className="w-full px-2 py-2 bg-gray-50 border border-gray-200 rounded-lg text-xs focus:ring-1 focus:ring-[#2e823f] focus:border-[#2e823f]"
-  />
-  {!toDate && (
-    <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
-      To
-    </span>
-  )}
-</div>
+                {!toDate && (
+                  <span className="absolute left-2 top-1/2 -translate-y-1/2 text-gray-400 text-xs pointer-events-none">
+                    To
+                  </span>
+                )}
+              </div>
 
 
               {/* Action Buttons */}

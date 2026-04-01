@@ -791,7 +791,7 @@ export function Dashboard() {
 
         {/* Filters */}
         {/* Main Navigation Tabs */}
-        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-gray-200 p-1 rounded-xl">
+        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-[#c9c7d9] p-1 rounded-xl">
           {[
             { id: 'dashboard', label: 'Dashboard', icon: '📊' },
             { id: 'customers', label: 'Customers', icon: '👤' },
@@ -808,7 +808,7 @@ export function Dashboard() {
             >
               <span>{view.icon}</span>
               <span className="hidden sm:inline">{view.label}</span>
-              <span className="sm:hidden">{view.label}</span>
+              <span className="sm:hidden font-bold">{view.label}</span>
             </button>
           ))}
         </div>
@@ -832,7 +832,7 @@ export function Dashboard() {
             <div className="flex gap-3 mb-4">
               <button
                 onClick={() => setIsSaleModalOpen(true)}
-                className="flex-1 bg-gradient-to-r from-[#2a803d] to-[#2a803d] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-bold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
+                className="flex-1 bg-[#3d571d] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-bold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
               >
                 <span>+</span>
                 <span>Add Sale</span>
@@ -979,7 +979,7 @@ export function Dashboard() {
                     <p className="text-gray-500">No pending balances</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-100">
+                  <div className="divide-y divide-gray-300">
                     {customersWithPending.map((customer) => (
                       <div 
                         key={customer.customer}
@@ -1084,7 +1084,7 @@ export function Dashboard() {
       {/* Floating Action Button */}
       <button
         onClick={() => setIsSaleModalOpen(true)}
-        className="fixed bottom-6 right-6 w-14 h-14 bg-[#186338] hover:bg-[#2e823f] text-white rounded-full shadow-lg shadow-green-900/40 flex items-center justify-center transition transform hover:scale-105 active:scale-95 z-30"
+        className="fixed bottom-8 right-6 w-12 h-12 bg-[#3d571d] hover:bg-[#2e823f] text-white rounded-full shadow-lg shadow-green-900/40 flex items-center justify-center transition transform hover:scale-105 active:scale-95 z-30"
         aria-label="Add new sale"
       >
         <svg className="w-7 h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">

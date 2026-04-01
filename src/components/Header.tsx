@@ -4,14 +4,14 @@ interface HeaderProps {
 
 export function Header({ onLogout }: HeaderProps) {
   return (
-    <header className="bg-gradient-to-r from-[#2a803d] via-[#2a803d] to-[#2a803d] text-white sticky top-0 z-40 shadow-lg">
+    <header className="bg-[#3d571d] text-white sticky top-0 z-40 shadow-lg">
       <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="text-2xl sm:text-3xl">🍄</span>
             <div>
               <h1 className="text-sm sm:text-2xl font-bold leading-tight">AR Organic Cashbook</h1>
-              <p className="text-green-200 text-xs sm:text-sm ">Daily Sales Tracker</p>
+              <p className="text-white text-xs sm:text-sm ">Daily Sales Tracker</p>
             </div>
           </div>
           <div className="flex items-center gap-3">

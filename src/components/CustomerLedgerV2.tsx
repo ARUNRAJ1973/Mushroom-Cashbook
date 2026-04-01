@@ -184,7 +184,7 @@ export function CustomerLedgerV2({
         </div>
       )}
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#2a803d] via-[#2a803d] to-[#2a803d] text-white sticky top-0 z-40 shadow-lg">
+      <header className="bg-gradient-to-r from-[#3d571d] via-[#3d571d] to-[#3d571d] text-white sticky top-0 z-40 shadow-lg">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <button

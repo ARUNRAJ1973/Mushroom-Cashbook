@@ -52,7 +52,7 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
   return (
     <div className="fixed inset-0 bg-gray-50 z-50 overflow-y-auto">
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#2a803d] via-[#2a803d] to-[#2a803d] text-white sticky top-0 z-40 shadow-lg">
+      <header className="bg-[#3d571d] text-white sticky top-0 z-40 shadow-lg">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <button
@@ -109,7 +109,7 @@ export function UsersList({ sales, payments, onViewCustomer, onClose }: UsersLis
               >
                 <div className="flex items-center justify-between mb-3">
                   <div className="flex items-center gap-3">
-                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#2f9145] to-[#2f9145] rounded-xl flex items-center justify-center text-white font-bold text-lg">
+                    <div className="w-10 h-10 sm:w-12 sm:h-12 bg-gradient-to-br from-[#2f9145] to-[#3d571d] rounded-xl flex items-center justify-center text-white font-bold text-lg">
                       {customer.name.charAt(0).toUpperCase()}
                     </div>
                     <div>
