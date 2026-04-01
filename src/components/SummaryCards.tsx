@@ -10,33 +10,33 @@ export function SummaryCards({ totals }: SummaryCardsProps) {
       label: 'Packs',
       value: totals.totalPacks,
       icon: '📦',
-      color: 'bg-blue-900',
+      color: 'bg-blue-950',
       lightColor: 'bg-blue-200',
-      textColor: 'text-blue-900',
+      textColor: 'text-blue-950',
     },
     {
       label: 'Amount',
       value: `₹${totals.totalAmount.toLocaleString()}`,
       icon: '💰',
-      color: 'bg-gray-900',
+      color: 'bg-gray-950',
       lightColor: 'bg-gray-200',
-      textColor: 'text-grey-900',
+      textColor: 'text-grey-950',
     },
     {
       label: 'Paid',
       value: `₹${totals.paidAmount.toLocaleString()}`,
       icon: '✅',
-      color: 'bg-emerald-500',
+      color: 'bg-emerald-950',
       lightColor: 'bg-emerald-200',
-      textColor: 'text-emerald-900',
+      textColor: 'text-emerald-950',
     },
     {
       label: 'Pending',
       value: `₹${totals.pendingAmount.toLocaleString()}`,
       icon: '⏳',
-      color: 'bg-red-500',
-      lightColor: 'bg-red-200',
-      textColor: 'text-red-900',
+      color: 'bg-orange-950',
+      lightColor: 'bg-orange-200',
+      textColor: 'text-orange-950',
     },
   ];
 
@@ -45,11 +45,11 @@ export function SummaryCards({ totals }: SummaryCardsProps) {
       {cards.map((card, idx) => (
         <div
           key={idx}
-          className={`${card.lightColor} rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm`}
+          className={`${card.lightColor} rounded-md p-2 sm:p-4 border border-gray-100 shadow-sm`}
         >
           <div className="flex items-center gap-1 sm:gap-2 mb-1">
             <span className="text-xs sm:text-lg">{card.icon}</span>
-            <span className={`text-[9px] sm:text-xs font-medium ${card.textColor}`}>
+            <span className={`text-[11px] sm:text-xs font-medium ${card.textColor}`}>
               {card.label}
             </span>
           </div>

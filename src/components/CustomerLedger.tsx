@@ -39,10 +39,10 @@ export function CustomerLedger({
               onClick={onClose}
               className="flex items-center gap-2 text-white hover:text-green-200 transition"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              {/* <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="text-sm font-medium">Back</span>
+              </svg> */}
+              <span className="text-sm font-medium">◀️ Back</span>
             </button>
             <h1 className="text-lg sm:text-xl font-bold truncate max-w-[200px] sm:max-w-md">
               {customerName}
@@ -158,7 +158,7 @@ export function CustomerLedger({
                             <span className={`px-2 py-0.5 rounded-full text-[10px] font-medium ${
                               entry.status === 'paid'
                                 ? 'bg-green-200 text-green-800'
-                                : 'bg-red-200 text-red-900'
+                                : 'bg-orange-200 text-orange-900'
                             }`}>
                               {entry.status === 'paid' ? 'Paid' : 'Pending'}
                             </span>

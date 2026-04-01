@@ -23,7 +23,7 @@ export function Tabs({ activeTab, onTabChange }: TabsProps) {
           }`}
         >
           <span className="mr-0.5 sm:mr-1 text-xs sm:text-base">{tab.icon}</span>
-          <span className="">{tab.label}</span>
+          <span className="text-sm font-bold text-gray-900 ms-1">{tab.label}</span>
         </button>
       ))}
     </div>

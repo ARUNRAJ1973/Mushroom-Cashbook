@@ -31,16 +31,10 @@ export function DaySection({ date, entries, onAddEntry, onEditEntry, onViewCusto
             <span className="text-sm sm:text-lg font-bold leading-none">{dateObj.getDate()}</span>
           </div>
           <div>
-            <p className="text-xs sm:text-sm text-gray-700">{formattedDate}</p>
-            <p className="text-xs text-gray-700">{entries.length} entries</p>
+            <p className="text-xs sm:text-sm text-gray-900">{formattedDate}</p>
+            <p className="text-xs text-gray-900">{entries.length} entries</p>
           </div>
         </div>
-        {/* <button
-          onClick={onAddEntry}
-          className="p-1 bg-green-600 hover:bg-green-400 text-white border border-gray-300 rounded-md transition"
-        >
-          <span className="text-lg">+</span>
-        </button> */}
       </div>
 
       {/* Entry Cards */}
@@ -64,25 +58,25 @@ export function DaySection({ date, entries, onAddEntry, onEditEntry, onViewCusto
                   {entry.customer}
                 </h4>
                   <span
-                    className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-medium ${
+                    className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] sm:text-xs font-bold ${
                       entry.status === 'paid'
-                        ? 'bg-green-100 text-green-700'
-                        : 'bg-red-100 text-red-900'
+                        ? 'bg-green-100 text-green-900'
+                        : 'bg-orange-100 text-orange-900'
                     }`}
                   >
                     {entry.status === 'paid' ? 'Paid' : 'Pending'}
                   </span>
                 </div>
-                <p className="text-xs text-gray-700">{entry.time} {"→"} {entry.packs} Packs</p>
+                <p className="text-xs text-gray-900">{entry.time} {"→"} {entry.packs} Packs</p>
                 {entry.description && (
-                  <p className="text-xs text-gray-700 mt-1 truncate">{entry.description}</p>
+                  <p className="text-xs text-gray-900 mt-1 truncate">{entry.description}</p>
                 )}
               </div>
               <div className="text-right ml-3">
                 <p className="text-base sm:text-lg font-bold text-gray-900">
                   ₹{entry.amount.toLocaleString()}
                 </p>
-                <p className="text-[10px] text-gray-700 mt-1">Edit</p>
+                <p className="text-[10px] text-gray-900 mt-1">Tap to Edit</p>
               </div>
             </div>
           </div>
@@ -91,10 +85,10 @@ export function DaySection({ date, entries, onAddEntry, onEditEntry, onViewCusto
 
       {/* Daily Summary */}
       <div className="mt-2 sm:mt-3 bg-gray-50 rounded-xl p-3 flex items-center justify-between">
-        <span className="text-xs text-gray-500">Day Total</span>
+        <span className="text-xs text-gray-900">Day Total</span>
         <div className="flex items-center gap-3 sm:gap-4">
-          <span className="text-xs text-gray-600">
-            {totals.totalPacks} <span className="text-gray-700">Packs</span>
+          <span className="text-xs text-gray-900">
+            {totals.totalPacks} <span className="text-gray-900">Packs</span>
           </span>
           <span className="text-sm font-bold text-gray-900">
             ₹{totals.totalAmount.toLocaleString()}

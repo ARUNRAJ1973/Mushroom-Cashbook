@@ -113,7 +113,7 @@ export function CustomerLedgerV2({
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
-    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' });
+    return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: '2-digit' });
   };
 
   const formatTime = (timeStr?: string) => {
@@ -184,17 +184,17 @@ export function CustomerLedgerV2({
         </div>
       )}
       {/* Header */}
-      <header className="bg-gradient-to-r from-[#073011] via-[#2e823f] to-[#031d0a] text-white sticky top-0 z-40 shadow-lg">
+      <header className="bg-gradient-to-r from-[#2a803d] via-[#2a803d] to-[#2a803d] text-white sticky top-0 z-40 shadow-lg">
         <div className="max-w-6xl mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <button
               onClick={onClose}
               className="flex items-center text-white hover:text-green-200 transition"
             >
-              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
-              </svg>
-              <span className="text-sm font-medium">Back</span>
+                  {/* <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  </svg> */}
+              <span className="text-sm font-medium">◀️ Back</span>
             </button>
             <h1 className="text-lg sm:text-xl font-bold truncate max-w-[200px] sm:max-w-md">
               {customerName}
@@ -213,57 +213,57 @@ export function CustomerLedgerV2({
       <main className="max-w-6xl mx-auto px-3 sm:px-4 py-4 sm:py-8">
         {/* Summary Cards */}
         <div className="grid grid-cols-3 sm:grid-cols-6 gap-2 sm:gap-3 mb-4 sm:mb-6">
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">📦</span>
-              <span className="text-[9px] sm:text-xs font-medium text-blue-600">Total</span>
+              <span className="text-[11px] sm:text-xs font-bold text-blue-600">Total</span>
             </div>
             <p className="text-sm sm:text-lg font-bold text-blue-600">{totals.totalPacks}</p>
-            <p className="text-[9px] text-gray-400">packs</p>
+            <p className="text-[11px] text-gray-900">packs</p>
           </div>
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">✅</span>
-              <span className="text-[9px] sm:text-xs font-medium text-green-600">Paid</span>
+              <span className="text-[11px] sm:text-xs font-bold text-green-600">Paid</span>
             </div>
             <p className="text-sm sm:text-lg font-bold text-green-600">{totals.totalPaidPacks}</p>
-            <p className="text-[9px] text-gray-400">packs</p>
+            <p className="text-[11px] text-gray-900">packs</p>
           </div>
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">⏳</span>
-              <span className="text-[9px] sm:text-xs font-medium text-red-600">Pending</span>
+              <span className="text-[11px] sm:text-xs font-bold text-orange-900">Pending</span>
             </div>
-            <p className={`text-sm sm:text-lg font-bold ${totals.totalPendingPacks > 0 ? 'text-red-600' : 'text-green-600'}`}>
+            <p className={`text-sm sm:text-lg font-bold ${totals.totalPendingPacks > 0 ? 'text-orange-600' : 'text-green-600'}`}>
               {totals.totalPendingPacks}
             </p>
-            <p className="text-[9px] text-gray-400">packs</p>
+            <p className="text-[11px] text-gray-900">packs</p>
           </div>
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">💰</span>
-              <span className="text-[9px] sm:text-xs font-medium text-gray-600">Sales</span>
+              <span className="text-[11px] sm:text-xs font-bold text-gray-600">Sales</span>
             </div>
             <p className="text-sm sm:text-lg font-bold text-gray-900">₹{totals.totalSales.toLocaleString()}</p>
-            <p className="text-[9px] text-gray-400">total</p>
+            <p className="text-[11px] text-gray-900">total</p>
           </div>
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">💵</span>
-              <span className="text-[9px] sm:text-xs font-medium text-green-600">Paid</span>
+              <span className="text-[11px] sm:text-xs font-bold text-green-600">Paid</span>
             </div>
             <p className="text-sm sm:text-lg font-bold text-green-600">₹{totals.totalPaid.toLocaleString()}</p>
-            <p className="text-[9px] text-gray-400">received</p>
+            <p className="text-[11px] text-gray-900">received</p>
           </div>
-          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-sm">
+          <div className="bg-white rounded-xl p-2 sm:p-4 border border-gray-100 shadow-md">
             <div className="flex items-center gap-1 mb-1">
               <span className="text-xs sm:text-lg">🕐</span>
-              <span className="text-[9px] sm:text-xs font-medium text-red-600">Pending</span>
+              <span className="text-[11px] sm:text-xs font-bold text-orange-900">Pending</span>
             </div>
-            <p className={`text-sm sm:text-lg font-bold ${totals.pendingAmount > 0 ? 'text-red-600' : 'text-green-600'}`}>
+            <p className={`text-sm sm:text-lg font-bold ${totals.pendingAmount > 0 ? 'text-orange-600' : 'text-green-600'}`}>
               ₹{totals.pendingAmount.toLocaleString()}
             </p>
-            <p className="text-[9px] text-gray-400">balance</p>
+            <p className="text-[11px] text-gray-800">balance</p>
           </div>
         </div>
 
@@ -295,17 +295,17 @@ export function CustomerLedgerV2({
                       className="hover:bg-gray-50 text-xs sm:text-sm cursor-pointer"
                       onClick={() => onEditSale?.(row.sale)}
                     >
-                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-600">
+                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-900">
                         <div>{formatDate(row.date)}</div>
-                        <div className="text-[10px] text-gray-400">{formatTime(row.sale.time)}</div>
+                        <div className="text-[10px] text-gray-900">{formatTime(row.sale.time)}</div>
                       </td>
-                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-600">
+                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-gray-900">
                         <div>
                           <div className="flex items-center gap-2">
                             <span className="font-medium">{row.packs} packs</span>
                           </div>
                           {row.description && (
-                            <p className="text-[10px] sm:text-xs text-gray-400">{row.description}</p>
+                            <p className="text-[10px] sm:text-xs text-gray-900">{row.description}</p>
                           )}
                           {row.payments.length > 0 && (
                             <div className="mt-1 space-y-0.5">
@@ -325,16 +325,16 @@ export function CustomerLedgerV2({
                           )}
                         </div>
                       </td>
-                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-right font-medium text-blue-600">
+                      <td className="px-2 sm:px-3 py-2 sm:py-3 text-right font-bold text-blue-600">
                         ₹{row.amount.toLocaleString()}
                       </td>
                       <td className="px-2 sm:px-3 py-2 sm:py-3 text-right">
                         {row.isPaid ? (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-green-100 text-green-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-green-100 text-green-800">
                             Paid
                           </span>
                         ) : (
-                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium bg-red-100 text-red-800">
+                          <span className="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-bold bg-orange-100 text-orange-900">
                             Pending
                           </span>
                         )}

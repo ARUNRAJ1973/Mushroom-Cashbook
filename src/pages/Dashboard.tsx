@@ -791,11 +791,11 @@ export function Dashboard() {
 
         {/* Filters */}
         {/* Main Navigation Tabs */}
-        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-gray-100 p-1 rounded-xl">
+        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-gray-200 p-1 rounded-xl">
           {[
             { id: 'dashboard', label: 'Dashboard', icon: '📊' },
-            { id: 'customers', label: 'Customers', icon: '👥' },
-            { id: 'analytics', label: 'Analytics', icon: '📈' },
+            { id: 'customers', label: 'Customers', icon: '👤' },
+            { id: 'analytics', label: 'Analytics', icon: '💹' },
           ].map((view) => (
             <button
               key={view.id}
@@ -832,7 +832,7 @@ export function Dashboard() {
             <div className="flex gap-3 mb-4">
               <button
                 onClick={() => setIsSaleModalOpen(true)}
-                className="flex-1 bg-gradient-to-r from-[#113D24] to-[#19663B] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-semibold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
+                className="flex-1 bg-gradient-to-r from-[#2a803d] to-[#2a803d] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-bold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
               >
                 <span>+</span>
                 <span>Add Sale</span>
@@ -889,8 +889,8 @@ export function Dashboard() {
               <div className="space-y-4">
                 {/* Fully Paid Section */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="bg-green-50 px-3 sm:px-4 py-3 border-b border-green-200">
-                    <h3 className="font-semibold text-green-800 text-sm sm:text-base">Fully Paid</h3>
+                  <div className="bg-green-100 px-3 sm:px-4 py-3 border-b border-green-200">
+                    <h3 className="font-bold text-green-800 text-sm sm:text-base">Fully Paid</h3>
                   </div>
                   {(() => {
                     const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
@@ -912,12 +912,12 @@ export function Dashboard() {
                             className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
                           >
                             <div>
-                              <p className="font-medium text-gray-900">{customer.customer}</p>
-                              <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
+                              <p className="font-bold text-gray-900">{customer.customer}</p>
+                              <p className="text-sm text-gray-800">{customer.totalPacks} packs sold</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-green-700">₹{customer.totalPaid.toLocaleString()}</p>
-                              <p className="text-xs text-green-600">fully paid</p>
+                              <p className="font-bold text-green-800">₹{customer.totalPaid.toLocaleString()}</p>
+                              <p className="text-xs text-green-800">fully paid</p>
                             </div>
                           </div>
                         ))}
@@ -928,8 +928,8 @@ export function Dashboard() {
 
                 {/* Partially Paid Section */}
                 <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="bg-orange-50 px-3 sm:px-4 py-3 border-b border-orange-200">
-                    <h3 className="font-semibold text-orange-800 text-sm sm:text-base">Partially Paid</h3>
+                  <div className="bg-orange-100 px-3 sm:px-4 py-3 border-b border-orange-200">
+                    <h3 className="font-bold text-orange-800 text-sm sm:text-base">Partially Paid</h3>
                   </div>
                   {(() => {
                     const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
@@ -940,7 +940,7 @@ export function Dashboard() {
                     if (partiallyPaidCustomers.length === 0) {
                       return (
                         <div className="p-6 text-center">
-                          <p className="text-gray-500 text-sm">No partially paid customers</p>
+                          <p className="text-gray-900 text-sm">No partially paid customers</p>
                         </div>
                       );
                     }
@@ -953,12 +953,12 @@ export function Dashboard() {
                             className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
                           >
                             <div>
-                              <p className="font-medium text-gray-900">{customer.customer}</p>
-                              <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
+                              <p className="font-bold text-gray-900">{customer.customer}</p>
+                              <p className="text-sm text-gray-900">{customer.totalPacks} packs sold</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-green-700">₹{customer.totalPaid.toLocaleString()}</p>
-                              <p className="text-xs text-orange-600">₹{customer.pendingAmount.toLocaleString()} pending</p>
+                              <p className="font-bold text-green-800">₹{customer.totalPaid.toLocaleString()}</p>
+                              <p className="text-sm text-orange-800">₹{customer.pendingAmount.toLocaleString()} pending</p>
                             </div>
                           </div>
                         ))}
@@ -988,11 +988,11 @@ export function Dashboard() {
                       >
                         <div>
                           <p className="font-medium text-gray-900">{customer.customer}</p>
-                          <p className="text-xs text-gray-500">{customer.totalPacks} packs sold</p>
+                          <p className="text-xs text-gray-800">{customer.totalPacks} packs sold</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-red-600">₹{customer.pendingAmount.toLocaleString()}</p>
-                          <p className="text-xs text-gray-500">pending</p>
+                          <p className="text-xs text-gray-800">pending</p>
                         </div>
                       </div>
                     ))}

@@ -73,7 +73,7 @@ export function EntryTable({ entries, onAddEntry, onEditEntry, onViewCustomer }:
                               className={`flex-shrink-0 px-2 py-0.5 rounded-full text-[10px] font-medium ${
                                 entry.status === 'paid'
                                   ? 'bg-green-100 text-green-700'
-                                  : 'bg-red-100 text-red-900'
+                                  : 'bg-orange-100 text-orange-900'
                               }`}
                             >
                               {entry.status === 'paid' ? 'Paid' : 'Pending'}
@@ -172,7 +172,7 @@ export function EntryTable({ entries, onAddEntry, onEditEntry, onViewCustomer }:
                         className={`px-2.5 py-1 rounded-full text-xs font-medium ${
                           entry.status === 'paid'
                             ? 'bg-green-100 text-green-700'
-                            : "bg-red-100 text-red-900"
+                            : "bg-orange-100 text-orange-900"
                         }`}
                       >
                         {entry.status === 'paid' ? 'Paid' : 'Pending'}
