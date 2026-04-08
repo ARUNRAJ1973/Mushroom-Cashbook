@@ -45,7 +45,7 @@ export function   SummaryCards({ totals }: SummaryCardsProps) {
       {cards.map((card, idx) => (
         <div
           key={idx}
-          className={`${card.lightColor} rounded-md p-2 sm:p-4 border border-gray-100 shadow-[0_0_12px_rgba(0,0,0,0.2)] hover:shadow-[0_0_8px_rgba(0,0,0,0.5)]`}
+          className={`${card.lightColor} rounded-md p-2 sm:p-4 border border-gray-100 shadow-[0_0_5px_rgba(0,0,0,0.2)] hover:shadow-[0_0_8px_rgba(0,0,0,0.5)]`}
         >
           <div className="flex items-center gap-1 sm:gap-2 mb-1">
             <span className="text-xs sm:text-lg">{card.icon}</span>

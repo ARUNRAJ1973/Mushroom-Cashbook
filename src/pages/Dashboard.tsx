@@ -47,6 +47,7 @@ export function Dashboard() {
   const [toDate, setToDate] = useState('');
   const [isAuthenticated, setIsAuthenticated] = useState(false);
   const [userId, setUserId] = useState<string | null>(null);
+  const [isAuthChecking, setIsAuthChecking] = useState(true);
   
   // Customer ledger state
   const [selectedCustomer, setSelectedCustomer] = useState<string | null>(null);
@@ -134,8 +135,9 @@ export function Dashboard() {
         setUserId(session.user.id);
         setIsAuthenticated(true);
       } else {
-        setIsLoading(false);
+        setIsAuthenticated(false);
       }
+      setIsAuthChecking(false);
     };
     checkAuth();
   }, []);
@@ -645,6 +647,26 @@ export function Dashboard() {
   };
 
 
+  // Show loader while checking authentication
+  if (isAuthChecking) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-[#073011] via-[#0a4a1a] to-[#031d0a] flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-20 h-20 bg-gradient-to-r from-[#073011] to-[#2e823f] rounded-2xl flex items-center justify-center mx-auto mb-6 animate-pulse">
+            <span className="text-4xl">🍄</span>
+          </div>
+          <h1 className="text-2xl font-bold text-white mb-2">AR Organic</h1>
+          <p className="text-gray-300 text-sm mb-6">Loading your cashbook...</p>
+          <div className="flex items-center justify-center gap-2">
+            <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+            <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></div>
+            <div className="w-2 h-2 bg-white rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
   // Show auth screen if not authenticated
   if (!isAuthenticated) {
     return <Auth onAuthSuccess={handleAuthSuccess} />;
@@ -791,7 +813,7 @@ export function Dashboard() {
 
         {/* Filters */}
         {/* Main Navigation Tabs */}
-        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-[#c9c7d9] p-1 rounded-xl">
+        <div className="flex gap-1 sm:gap-2 mb-4 sm:mb-6 bg-[#d7dbd3] p-1 rounded-xl">
           {[
             { id: 'dashboard', label: 'Dashboard', icon: '📊' },
             { id: 'customers', label: 'Customers', icon: '👤' },
@@ -829,7 +851,7 @@ export function Dashboard() {
             />
 
             {/* Add Buttons */}
-            <div className="flex gap-3 mb-4">
+            {/* <div className="flex gap-3 mb-4">
               <button
                 onClick={() => setIsSaleModalOpen(true)}
                 className="flex-1 bg-[#3d571d] hover:from-[#0a4a1a] hover:to-[#3a9a4f] text-white font-bold py-2.5 px-4 rounded-lg transition flex items-center justify-center gap-2 text-xs sm:text-sm"
@@ -837,7 +859,7 @@ export function Dashboard() {
                 <span>+</span>
                 <span>Add Sale</span>
               </button>
-              {/* <button
+              <button
                 onClick={() => {
                   setPaymentModalCustomer('');
                   setIsPaymentModalOpen(true);
@@ -846,8 +868,8 @@ export function Dashboard() {
               >
                 <span>+</span>
                 <span>Add Payment</span>
-              </button> */}
-            </div>
+              </button>
+            </div> */}
 
             <Tabs activeTab={activeTab} onTabChange={setActiveTab} />
 
@@ -888,9 +910,9 @@ export function Dashboard() {
             {activeTab === 'paid' && (
               <div className="space-y-4">
                 {/* Fully Paid Section */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                  <div className="bg-green-100 px-3 sm:px-4 py-3 border-b border-green-200">
-                    <h3 className="font-bold text-green-800 text-sm sm:text-base">Fully Paid</h3>
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden border-b border-green-600">
+                  <div className="bg-green-100 px-3 sm:px-4 py-3 border-b border-green-600">
+                    <h3 className="font-bold text-green-800 text-sm sm:text-base text-center">Fully Paid</h3>
                   </div>
                   {(() => {
                     const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
@@ -904,12 +926,12 @@ export function Dashboard() {
                       );
                     }
                     return (
-                      <div className="divide-y divide-gray-100">
+                      <div className="divide-y divide-green-200 ">
                         {fullyPaidCustomers.map((customer) => (
                           <div 
                             key={customer.customer}
                             onClick={() => handleViewCustomer(customer.customer)}
-                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between "
                           >
                             <div>
                               <p className="font-bold text-gray-900">{customer.customer}</p>
@@ -917,7 +939,7 @@ export function Dashboard() {
                             </div>
                             <div className="text-right">
                               <p className="font-bold text-green-800">₹{customer.totalPaid.toLocaleString()}</p>
-                              <p className="text-xs text-green-800">fully paid</p>
+                              <p className="text-xs text-green-800 ">fully paid</p>
                             </div>
                           </div>
                         ))}
@@ -927,9 +949,9 @@ export function Dashboard() {
                 </div>
 
                 {/* Partially Paid Section */}
-                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
+                <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden border-b border-orange-200">
                   <div className="bg-orange-100 px-3 sm:px-4 py-3 border-b border-orange-200">
-                    <h3 className="font-bold text-orange-800 text-sm sm:text-base">Partially Paid</h3>
+                    <h3 className="font-bold text-orange-800 text-sm sm:text-base text-center">Partially Paid</h3>
                   </div>
                   {(() => {
                     const allCustomersWithBalances = getCustomersWithBalances(sales, payments);
@@ -945,20 +967,20 @@ export function Dashboard() {
                       );
                     }
                     return (
-                      <div className="divide-y divide-gray-100">
+                      <div className="divide-y divide-orange-200">
                         {partiallyPaidCustomers.map((customer) => (
                           <div 
                             key={customer.customer}
                             onClick={() => handleViewCustomer(customer.customer)}
-                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                            className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between gap-2"
                           >
                             <div>
                               <p className="font-bold text-gray-900">{customer.customer}</p>
                               <p className="text-sm text-gray-900">{customer.totalPacks} packs sold</p>
                             </div>
                             <div className="text-right">
-                              <p className="font-bold text-green-800">₹{customer.totalPaid.toLocaleString()}</p>
-                              <p className="text-sm text-orange-800">₹{customer.pendingAmount.toLocaleString()} pending</p>
+                              <p className="font-bold text-green-800 ">₹{customer.totalPaid.toLocaleString()}</p>
+                              <p className="text-sm text-red-600">₹{customer.pendingAmount.toLocaleString()} pending</p>
                             </div>
                           </div>
                         ))}
@@ -970,29 +992,29 @@ export function Dashboard() {
             )}
 
             {activeTab === 'pending' && (
-              <div className="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden">
-                <div className="bg-gray-50 px-3 sm:px-4 py-3 border-b border-gray-200">
-                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base">Customers with Pending Balance</h3>
+              <div className="bg-white rounded-xl shadow-sm border border-red-300 overflow-hidden border-b border-gray-200">
+                <div className="bg-red-100 px-3 sm:px-4 py-3 border-b border-red-500">
+                  <h3 className="font-semibold text-gray-900 text-sm sm:text-base text-center">Pending Amount</h3>
                 </div>
                 {customersWithPending.length === 0 ? (
                   <div className="p-8 text-center">
-                    <p className="text-gray-500">No pending balances</p>
+                    <p className="text-gray-500 text-sm">No pending balances</p>
                   </div>
                 ) : (
-                  <div className="divide-y divide-gray-300">
+                  <div className="divide-y divide-red-300">
                     {customersWithPending.map((customer) => (
                       <div 
                         key={customer.customer}
                         onClick={() => handleViewCustomer(customer.customer)}
-                        className="p-3 sm:p-4 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
+                        className="px-3 py-2 hover:bg-gray-50 cursor-pointer flex items-center justify-between"
                       >
                         <div>
                           <p className="font-medium text-gray-900">{customer.customer}</p>
-                          <p className="text-xs text-gray-800">{customer.totalPacks} packs sold</p>
+                          <p className="text-xs text-black ">{customer.totalPacks} packs sold</p>
                         </div>
                         <div className="text-right">
                           <p className="font-bold text-red-600">₹{customer.pendingAmount.toLocaleString()}</p>
-                          <p className="text-xs text-gray-800">pending</p>
+                          <p className="text-xs text-black ">pending</p>
                         </div>
                       </div>
                     ))}
